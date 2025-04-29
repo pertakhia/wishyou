@@ -1,0 +1,27 @@
+<div class="p-4 flex flex-wrap gap-4 items-center bg-gray-50 rounded shadow-md mb-4">
+  <label class="flex items-center gap-2 text-sm font-medium text-gray-700">
+    <span>Limit:</span>
+    <select
+      [value]="limit()"
+      (change)="setLimit($event)"
+      class="px-3 py-2 rounded border border-gray-300 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+    >
+      <option *ngFor="let l of [5, 10, 20, 50, 100]" [value]="l">{{ l }}</option>
+    </select>
+  </label>
+
+  <label class="flex items-center gap-2 text-sm font-medium text-gray-700">
+    <span>Page:</span>
+    <select
+      [value]="page()"
+      (change)="setPage($event)"
+      class="px-3 py-2 rounded border border-gray-300 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+    >
+      <option *ngFor="let p of [1, 2, 3, 4, 5]" [value]="p">{{ p }}</option>
+    </select>
+  </label>
+</div>
+
+<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 p-4">
+  <app-image-card *ngFor="let image of images()" [image]="image" (copyLink)="onCopyLink($event)"> </app-image-card>
+</div>

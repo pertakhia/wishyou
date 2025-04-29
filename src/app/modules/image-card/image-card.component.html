@@ -1,0 +1,11 @@
+<div class="card">
+  <div class="image-wrapper">
+    <div class="image-loader" *ngIf="!imageLoaded"></div>
+    <img [src]="image.download_url" [alt]="image.author" [class.hidden]="!imageLoaded" (load)="onImageLoad()" />
+  </div>
+
+  <div class="card-body">
+    <h3 class="author">{{ image.author }}</h3>
+    <button class="copy-btn" (click)="onCopyLink()">Copy URL</button>
+  </div>
+</div>
