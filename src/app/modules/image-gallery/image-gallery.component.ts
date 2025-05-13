@@ -35,18 +35,35 @@ export class ImageGalleryComponent implements OnInit, AfterViewInit, OnDestroy {
   limit = this.httpResoursService.limit;
   page = this.httpResoursService.page;
 
-  screenshotProtectionEnabled = false;
+  screenshotProtectionEnabled = signal(false);
 
-  @ViewChild("screen", { static: true }) screen: any;
 
-  @HostListener("window:blur")
-  onBlur() {
-    this.screenshotProtectionEnabled = true;
+
+
+  
+
+
+
+  @HostListener('window:keyup', ['$event'])
+  handleKeyUp(event: KeyboardEvent) {
+    console.log(event);
+    if (event.key === 'PrintScreen') {
+      // Clipboard data overwrite attempt
+      // This is a workaround and may not work in all browsers
+      // and may not be reliable.
+
+      //blur the screen
+      this.screenshotProtectionEnabled.set(true);
+      this.clearClipboard();
+    }
   }
 
-  @HostListener("window:focus")
-  onFocus() {
-    this.screenshotProtectionEnabled = false;
+  clearClipboard() {
+    // Clipboard overwrite (not reliable on all browsers)
+    navigator.clipboard.writeText('')
+      .then(() => console.log('Clipboard cleared'))
+      .catch(err => console.warn('Clipboard overwrite failed', err));
+
   }
 
   constructor() {
@@ -56,6 +73,14 @@ export class ImageGalleryComponent implements OnInit, AfterViewInit, OnDestroy {
       },
       { allowSignalWrites: true }
     );
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') {
+        // გვერდი აღარ ჩანს, შესაძლოა სქრინშოტი/რეკორდი
+        this.screenshotProtectionEnabled.set(true); 
+        // ან დაფარე გარკვეული სექცია
+      }
+    });
   }
 
   ngOnInit() {
@@ -75,7 +100,7 @@ export class ImageGalleryComponent implements OnInit, AfterViewInit, OnDestroy {
 
     Object.defineProperty(element, "id", {
       get: () => {
-        this.screenshotProtectionEnabled = true;
+        this.screenshotProtectionEnabled.set(true);
         throw new Error("DevTools detected");
       }
     });
