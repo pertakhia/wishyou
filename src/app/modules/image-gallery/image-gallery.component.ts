@@ -1,5 +1,16 @@
-import { Component, DestroyRef, EffectRef, effect, inject, OnDestroy, OnInit, signal } from "@angular/core";
-import { Image } from "../../model/image";
+import {
+  Component,
+  DestroyRef,
+  EffectRef,
+  effect,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+  HostListener,
+  AfterViewInit
+} from "@angular/core";
+import { Images } from "../../model/image";
 import { HttpresoursService } from "../../services/httpresours.service";
 import { catchError, of } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
@@ -8,17 +19,29 @@ import { NgFor, NgIf } from "@angular/common";
 
 @Component({
   selector: "app-image-gallery",
-  imports: [ImageCardComponent, NgFor, NgIf],
+  imports: [ImageCardComponent, NgFor],
   templateUrl: "./image-gallery.component.html",
   styleUrl: "./image-gallery.component.scss"
 })
-export class ImageGalleryComponent implements OnInit, OnDestroy {
+export class ImageGalleryComponent implements OnInit, AfterViewInit, OnDestroy {
   private httpResoursService = inject(HttpresoursService);
   public cleanup: EffectRef | null = null;
 
-  images = signal<Image[]>([]);
+  images = signal<Images[]>([]);
   limit = this.httpResoursService.limit;
   page = this.httpResoursService.page;
+
+  screenshotProtectionEnabled = false;
+
+  @HostListener("window:blur")
+  onBlur() {
+    this.screenshotProtectionEnabled = true;
+  }
+
+  @HostListener("window:focus")
+  onFocus() {
+    this.screenshotProtectionEnabled = false;
+  }
 
   constructor() {
     this.cleanup = effect(
@@ -32,6 +55,19 @@ export class ImageGalleryComponent implements OnInit, OnDestroy {
   ngOnInit() {
     // reactively watch the images resource
   }
+
+  ngAfterViewInit() {
+    const element = new Image();
+
+    Object.defineProperty(element, "id", {
+      get: () => {
+        this.screenshotProtectionEnabled = true;
+        throw new Error("DevTools detected");
+      }
+    });
+    console.log(element);
+  }
+
   setLimit(event: Event) {
     const value = Number((event.target as HTMLSelectElement).value);
     this.httpResoursService.setLimit(value);
@@ -41,7 +77,7 @@ export class ImageGalleryComponent implements OnInit, OnDestroy {
     this.httpResoursService.setPage(Number((event.target as HTMLSelectElement).value));
   }
 
-  onCopyLink(image: Image) {
+  onCopyLink(image: Images) {
     navigator.clipboard
       .writeText(image.download_url)
       .then(() => {

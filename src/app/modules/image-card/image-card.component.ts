@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { Image } from "../../model/image";
+import { Images } from "../../model/image";
 import { NgIf } from "@angular/common";
 
 @Component({
@@ -9,8 +9,8 @@ import { NgIf } from "@angular/common";
   styleUrl: "./image-card.component.scss"
 })
 export class ImageCardComponent {
-  @Input({ required: true }) image!: Image;
-  @Output() copyLink = new EventEmitter<Image>();
+  @Input({ required: true }) image!: Images;
+  @Output() copyLink = new EventEmitter<Images>();
   imageLoaded = false;
 
   onCopyLink() {

@@ -1,23 +1,20 @@
 @import "tailwindcss";
-.skeleton {
-  @apply bg-gray-300 rounded-lg;
+.sensitive-container.protected {
   position: relative;
-  overflow: hidden;
-
-  &::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -150px;
-    height: 100%;
-    width: 150px;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    animation: loading 1.2s infinite;
-  }
+  filter: blur(12px);
+  pointer-events: none;
 }
 
-@keyframes loading {
-  100% {
-    left: 100%;
-  }
+.sensitive-container.protected::after {
+  content: "ეკრანის დაფიქსირება: დაცვა გააქტიურებულია";
+  color: red;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 20px;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 10px 20px;
+  border-radius: 10px;
+  z-index: 10;
 }

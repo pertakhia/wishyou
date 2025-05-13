@@ -1,6 +1,6 @@
 import {  httpResource } from "@angular/common/http";
 import { computed, Injectable, signal } from "@angular/core";
-import { Image } from "../model/image";
+import { Images } from "../model/image";
 import { environment } from "../../environments/environment";
 
 @Injectable({
@@ -16,7 +16,7 @@ export class HttpresoursService {
 
   // URL + computed params
   private url =  environment.apiUrl;
-  private imagesResource = httpResource<Image[]>(() => `${this.url}?limit=${this.limit()}&page=${this.page()}`);
+  private imagesResource = httpResource<Images[]>(() => `${this.url}?limit=${this.limit()}&page=${this.page()}`);
 
   // signal for images
   images = computed(() => this.imagesResource.value() ?? []);
