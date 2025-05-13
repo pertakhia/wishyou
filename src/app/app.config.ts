@@ -4,6 +4,7 @@ import { provideHttpClient, withFetch } from "@angular/common/http";
 
 import { routes } from "./app.routes";
 import { HttpresoursService } from "./services/httpresours.service";
+import { NgxCaptureModule } from "ngx-capture";
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -12,6 +13,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withFetch()),
     {
       provide: HttpresoursService
-    }
+    },
+    NgxCaptureModule
   ]
 };

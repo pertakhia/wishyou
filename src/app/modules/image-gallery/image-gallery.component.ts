@@ -8,14 +8,17 @@ import {
   OnInit,
   signal,
   HostListener,
-  AfterViewInit
+  AfterViewInit,
+  ViewChild
 } from "@angular/core";
 import { Images } from "../../model/image";
 import { HttpresoursService } from "../../services/httpresours.service";
-import { catchError, of } from "rxjs";
+import { catchError, of, tap } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ImageCardComponent } from "../image-card/image-card.component";
 import { NgFor, NgIf } from "@angular/common";
+
+import { NgxCaptureService } from "ngx-capture";
 
 @Component({
   selector: "app-image-gallery",
@@ -26,12 +29,15 @@ import { NgFor, NgIf } from "@angular/common";
 export class ImageGalleryComponent implements OnInit, AfterViewInit, OnDestroy {
   private httpResoursService = inject(HttpresoursService);
   public cleanup: EffectRef | null = null;
+  public captureService = inject(NgxCaptureService);
 
   images = signal<Images[]>([]);
   limit = this.httpResoursService.limit;
   page = this.httpResoursService.page;
 
   screenshotProtectionEnabled = false;
+
+  @ViewChild("screen", { static: true }) screen: any;
 
   @HostListener("window:blur")
   onBlur() {
@@ -54,6 +60,14 @@ export class ImageGalleryComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     // reactively watch the images resource
+    this.captureService
+      .getImage(document.body, true)
+      .pipe(
+        tap(img => {
+          console.log(img);
+        })
+      )
+      .subscribe();
   }
 
   ngAfterViewInit() {
